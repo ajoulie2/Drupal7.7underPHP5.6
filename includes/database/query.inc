@@ -1736,11 +1736,15 @@ class DatabaseCondition implements QueryConditionInterface, Countable {
           // It's a structured condition, so parse it out accordingly.
           // Note that $condition['field'] will only be an object for a dependent
           // DatabaseCondition object, not for a dependent subquery.
-          if ($condition['field'] instanceof QueryConditionInterface) {
+//if ($key !== '#conjunction' && $condition['field'] instanceOf QueryConditionInterface) {
+         if ($condition['field'] instanceof QueryConditionInterface) {
+ //if ($key !== '#conjunction' && $condition['field'] instanceOf QueryConditionInterface) {
+ //        $this->conditions[$key]['field'] = clone($condition['field']);
+  //     }
             // Compile the sub-condition recursively and add it to the list.
             $condition['field']->compile($connection, $queryPlaceholder);
             $condition_fragments[] = '(' . (string) $condition['field'] . ')';
-            $arguments += $condition['field']->arguments();
+           $arguments += $condition['field']->arguments();
           }
           else {
             // For simplicity, we treat all operators as the same data structure.
@@ -1811,14 +1815,22 @@ class DatabaseCondition implements QueryConditionInterface, Countable {
    * Only copies fields that implement QueryConditionInterface. Also sets
    * $this->changed to TRUE.
    */
-  function __clone() {
+/*  function __clone() {
     $this->changed = TRUE;
     foreach ($this->conditions as $key => $condition) {
       if ($condition['field'] instanceOf QueryConditionInterface) {
         $this->conditions[$key]['field'] = clone($condition['field']);
       }
     }
+  }*/
+function __clone() {
+  $this->changed = TRUE;
+  foreach ($this->conditions as $key => $condition) {
+    if ($key !== '#conjunction' && $condition['field'] instanceOf ConditionInterface) {
+      $this->conditions[$key]['field'] = clone($condition['field']);
+    }
   }
+}
 
   /**
    * Gets any special processing requirements for the condition operator.
